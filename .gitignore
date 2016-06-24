@@ -1,0 +1,3 @@
+# Ingore the following file extensions
+*.pyc
+*.txt
