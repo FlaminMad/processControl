@@ -1,4 +1,10 @@
+# The log headers specified in this file will be appended as titles to the CSV
+# files upon creation. For no titles, leave the first point as ""
+
 log_headers:
     - "PV"
     - "SP"
     - "OP"
+
+# Note: The timestamp is automatically added and does not need to be specified
+#       unless it differes to the local clock

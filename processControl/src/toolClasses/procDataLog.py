@@ -13,23 +13,40 @@ import csv
 import time
 from yamlImport import yamlImport
 
-#@todo: write logs to their own designted folder
 
 class procDataLog:
+    """Used to log data from the process upon controller runtime
+    
+    Usage: Create an instance of the class to initialise the required params
+           Call 'startlog()' to begin logging
+           Add to log using 'write(data)' where data contains a list of values
+           When finished, call 'stoplog()'
+           
+    It should be noted that a config file is avaliable in the 'cfg' directory
+    to allow the addition of headers to the file. Futhermore, a new config file
+    is created at midnight each day to avoid problems with large files.
+    """
     
     def __init__(self):
         """Setup"""
         self.logRun = 0
+        self.dateNow = time.strftime('%d')
         self.headerCfg = yamlImport.importYAML("../../cfg/logHeaders.yaml")
+        self.headerCfg["log_headers"].insert(0,"Time")
     
     
     def write(self, logData):
-        """Write values to a log
+        """Write given values to a log
         
         :param logData: list of data to log to the csv file
         :type logData: list
         """
         if self.logRun == 1:
+            if time.strftime('%d') != self.dateNow:
+                self.stopLog()
+                self.startLog()
+                self.dateNow = time.strftime('%d')
+                
             if type(logData) != list:
                 logData = [self.__formatTime(), logData]
             else:
@@ -50,14 +67,13 @@ class procDataLog:
             print("A log is already running. Please stop that first")
             return
         if name == None:
-            fileName = self.__formatTimeDate() + ".csv"
+            fileName = "../../log/" + self.__formatTimeDate() + ".csv"
         else:
-            fileName = str(name) +".csv"
+            fileName = "../../log/" + str(name) +".csv"
         self.logFile = open(fileName, 'wb')
         self.csvLog = csv.writer(self.logFile,\
                                  delimiter=',',\
                                  quoting=csv.QUOTE_ALL)
-        self.headerCfg["log_headers"].insert(0,"Time")
         self.csvLog.writerow(self.headerCfg["log_headers"])
         self.logFile.flush()
         self.logRun = 1

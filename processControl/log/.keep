@@ -1,0 +1,3 @@
+# This directory contains the files created when logging is enabled for a given
+# controller. File names are in the format HH.MM.SS dd-mm-yyyy (Time Date)
+# unless previously specified otherwise.
