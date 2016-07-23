@@ -1,0 +1,32 @@
+#Settings for the graphical ploting tools
+plot_cfg:
+    y_axis_min: 0
+    y_axis_max: 100
+    x_axis_length: 20
+    y_axis_label: 'PV'
+    x_axis_label: 'Time (s)'
+
+pen_1:
+    name: "PV"
+    colour: "go-"
+    plot: 1
+
+pen_2:
+    name: "SP"
+    colour: "b^-"
+    plot: 1
+
+pen_3:
+    name: "OP"
+    colour: "rx-"
+    plot: 2
+
+pen_4:
+    name: "OP1"
+    colour: "rx-"
+    plot: 2
+
+pen_5:
+    name: "OP2"
+    colour: "rx-"
+    plot: 3
