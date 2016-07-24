@@ -15,7 +15,13 @@ import matplotlib.pyplot as plt
 from yamlImport import yamlImport
 
 class plotDataPoints:
-    """Insert Help Text"""
+    """Plots a graph of the data passed to it
+    
+    Usage:  Ensure all params are setup in the 'plotPenConfig' file 
+            Create an instance of the class to initialise the required params
+            Call 'dataUpdate' to add data to the plot
+            Use 'closeBlock' upon program end to keep plot window open
+    """
     
     def __init__(self):
         """Import config and call the necessary setup functions"""
@@ -81,6 +87,7 @@ class plotDataPoints:
         """Plots the x and y data from the 'dataUpdate' method"""
         for i in range(1, self.penDict.__len__()+1):
             for j in range(self.penDict[i].__len__()):
+                print self.penDict
                 self.ax[i].plot(self.xData,\
                 np.transpose(self.yData[int(self.penDict[i][j][-1])-1,:]),\
                 self.plotCfg[self.penDict[i][j]]["colour"],\
@@ -103,7 +110,6 @@ class plotDataPoints:
         """Add data to the graph"""
         self.xData = np.append(self.xData,x)
         self.yData = np.append(self.yData,np.transpose(np.matrix(y)),1)
-        
         if len(self.xData) > self.plotCfg['plot_cfg']['x_axis_length']:
             self.xData = np.delete(self.xData,0)
             self.yData = np.delete(self.yData,0,1)
