@@ -1,0 +1,26 @@
+# Setup Enhanced PID controller parameters in this file
+# Controller Tuning
+ctrlType: "PID"
+Kg:  8.29
+Ki: 24.11
+Kd:  3.58
+
+# Time Interval
+dT: 5
+
+# Limits
+vlvLowLimit: 0
+vlvHighLimit: 100
+
+# Advanced
+antiWindUp: 0.0
+tuningMode: "N"
+
+#Shift Equation Parameters (Y= Mx + C) - Uncomment one set only
+#Test System
+M1: 0.18
+C1: 15.88
+
+#Live System
+#M1: 0.055
+#C1: 209.33

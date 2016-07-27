@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 @author: Alexander David Leech
-@date:   Sun Jul 24 20:46:03 2016
+@date:   Mon Jul 25 23:19:51 2016
 @rev:    1
 @lang:   Python 2.7
-@deps:   <None>
-@desc:   Tool to log and plot data from a MODBUS connection. Acts as an ideal
-         tool for logging and monitoring step tests as they progress.
+@deps:   <>
+@desc:   Simple PID controller algorithm
 """
+
 import time
 
 from ..toolClasses.modbusClient   import modbusClient
@@ -16,9 +16,10 @@ from ..toolClasses.osTools        import osTools
 from ..toolClasses.plotDataPoints import plotDataPoints
 from ..toolClasses.procDataLog    import procDataLog
 from ..toolClasses.yamlImport     import yamlImport
+from .PIDController               import PIDController
 
-class dataLoggingTool:
-    """Tool to log and plot data from a MODBUS connection
+class PIDControl:
+    """A PID algorithm for use with a wide range control applications
     
     Usage:  Ensure all params are setup in the 'controllerSettings' file
             Create an instance of the class to initialise the required params
@@ -33,7 +34,8 @@ class dataLoggingTool:
         self.ext = osTools()
         self.gph = plotDataPoints()
         self.log = procDataLog()
-        self.cfg = yamlImport.importYAML("./cfg/controllerSettings/dataLoggingTool.yaml")
+        self.PID = PIDController()
+        self.cfg = yamlImport.importYAML("./cfg/controllerSettings.yaml")
         self.count = 0
 
     
@@ -51,11 +53,10 @@ class dataLoggingTool:
             self.coms.closeConnection()
             self.gph.closeBlock()               #Keep data plot open until exit
         else:
-            raise ValueError 
-        
-    
+            raise ValueError
+
     def run(self):
-        """Main run loop for the data logging tool
+        """Main run loop for the PID controller
         Ensure that the startStop method is called before and after this function
         """
         startTime = time.time()                 #For time reference
@@ -63,13 +64,14 @@ class dataLoggingTool:
             loopTime = time.time()              #Itteration start time
             runTime = round(time.time() - startTime)
             data = self.IOHandler()
+            #control
             self.log.write(data)
             self.gph.dataUpdate(runTime, data)
             if self.ext.kbdExit():              #Detect exit condition
                 break
             print self.count                    #Heartbeat
             self.count += 1                     #Heartbeat
-            time.sleep(self.cfg['interval'] -\
+            time.sleep(self.cfg['PIDControl']['interval'] -\
                       (time.time() - loopTime)) #Loop Interval
     
     def IOHandler(self):
@@ -83,9 +85,9 @@ class dataLoggingTool:
         
     
 def main():
-    ctrl = dataLoggingTool()                      #Initialise the data logging tool class
-    ctrl.startStop(1)                             #Start logs and open connection
-    ctrl.run()                                    #Run main method
-    ctrl.startStop(0)                             #Start logs and open connection  
+    ctrl = PIDControl()                      #Initialise the data logging tool class
+    ctrl.startStop(1)                        #Start logs and open connection
+    ctrl.run()                               #Run main method
+    ctrl.startStop(0)                        #Start logs and open connection  
 
 if __name__ == '__main__':main()

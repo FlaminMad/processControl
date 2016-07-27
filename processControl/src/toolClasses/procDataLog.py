@@ -10,6 +10,7 @@
 """
 
 import csv
+import copy
 import time
 from yamlImport import yamlImport
 
@@ -31,16 +32,17 @@ class procDataLog:
         """Setup"""
         self.logRun = 0
         self.dateNow = time.strftime('%d')
-        self.headerCfg = yamlImport.importYAML("../../cfg/logHeaders.yaml")
+        self.headerCfg = yamlImport.importYAML("./cfg/logHeaders.yaml")
         self.headerCfg["log_headers"].insert(0,"Time")
     
     
-    def write(self, logData):
+    def write(self, procData):
         """Write given values to a log
         
         :param logData: list of data to log to the csv file
         :type logData: list
         """
+        logData = copy.deepcopy(procData)
         if self.logRun == 1:
             if time.strftime('%d') != self.dateNow:
                 self.stopLog()
@@ -48,9 +50,9 @@ class procDataLog:
                 self.dateNow = time.strftime('%d')
                 
             if type(logData) != list:
-                logData = [self.__formatTime(), logData]
+                logData = [self.formatTime(), logData]
             else:
-                logData.insert(0, self.__formatTime())
+                logData.insert(0, self.formatTime())
             self.csvLog.writerow(logData)
             self.logFile.flush()
         else:
@@ -67,9 +69,9 @@ class procDataLog:
             print("A log is already running. Please stop that first")
             return
         if name == None:
-            fileName = "../../log/" + self.__formatTimeDate() + ".csv"
+            fileName = "./log/" + self.__formatTimeDate() + ".csv"
         else:
-            fileName = "../../log/" + str(name) +".csv"
+            fileName = "./log/" + str(name) +".csv"
         self.logFile = open(fileName, 'wb')
         self.csvLog = csv.writer(self.logFile,\
                                  delimiter=',',\
@@ -85,7 +87,7 @@ class procDataLog:
         self.logRun = 0
 
 
-    def __formatTime(self):
+    def formatTime(self):
         """Format the time appropriate for logging"""
         return time.strftime('%H') + ":" +\
                time.strftime('%M') + ":" +\

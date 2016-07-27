@@ -25,7 +25,7 @@ class plotDataPoints:
     
     def __init__(self):
         """Import config and call the necessary setup functions"""
-        self.plotCfg = yamlImport.importYAML("../../cfg/plotPenConfig.yaml")
+        self.plotCfg = yamlImport.importYAML("./cfg/plotPenConfig.yaml")
         self.__setupPlots()
         self.__setupArrays()
         self.__setupPens()
@@ -87,7 +87,6 @@ class plotDataPoints:
         """Plots the x and y data from the 'dataUpdate' method"""
         for i in range(1, self.penDict.__len__()+1):
             for j in range(self.penDict[i].__len__()):
-                print self.penDict
                 self.ax[i].plot(self.xData,\
                 np.transpose(self.yData[int(self.penDict[i][j][-1])-1,:]),\
                 self.plotCfg[self.penDict[i][j]]["colour"],\

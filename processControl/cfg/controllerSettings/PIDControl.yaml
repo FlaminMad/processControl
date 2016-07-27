@@ -1,0 +1,29 @@
+# Settings for the basic PID controller algorithm
+
+# Controller state - "auto" or "manual
+controlMode: "auto"
+
+# Controller setpoint - 0 - 100%
+setPoint: 50
+
+#Control Time Interval (s)
+interval: 5
+
+# Tuning Params
+# Recommend the Cohen-coon method
+Kg:  8.29
+Ki: 24.11
+Kd:  3.58
+ctrlType: "PID"
+
+# Saturation
+limitsActive: true
+vlvLowLimit: 0
+vlvHighLimit: 100
+
+# Anti-Windup
+# Set to:
+#       0.0 for clamping antiwindup
+#       1.0 for disabled
+#       X.X for custom settings
+antiWindUp: 0.0

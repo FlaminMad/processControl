@@ -18,12 +18,18 @@ from pymodbus.payload     import BinaryPayloadBuilder, BinaryPayloadDecoder
 from pymodbus.constants   import Endian
 
 class modbusClient:
-    """Class to carry out MODBUS read/write requests"""
+    """Class to carry out MODBUS read/write requests
+    
+    Usage:  Ensure all params are setup in the 'modbusSettings' file
+            Call 'openConnection' to connect to the assigned server
+            Use 'dataHandler' to read or write data to the server
+            Call 'closeConnection' to safely close the connection
+    """
 
     def __init__(self):
         """Load settings and connect to the designated slave"""
         
-        self.modbusCfg = yamlImport.importYAML("../../cfg/modbusSettings.yaml")
+        self.modbusCfg = yamlImport.importYAML("./cfg/modbusSettings.yaml")
         if self.modbusCfg['logging'] == "enable":
             self.log = self.__logging()
         if self.__setupClient() == 0:
@@ -157,7 +163,7 @@ class modbusClient:
         :type reg:       int
         :type addr:      int
         :type length:    int
-        :type encodeing: int
+        :type encoding: int
         
         :return:         List containing the requested data or failure exception.
         """
@@ -216,7 +222,7 @@ class modbusClient:
         :type reg:       int
         :type addr:      int
         :type length:    int
-        :type encodeing: int
+        :type encoding: int
         
         :return:         success or failure exception
         """
