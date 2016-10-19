@@ -3,7 +3,7 @@ plot_cfg:
     y_axis_min: 0
     y_axis_max: 100
     x_axis_length: 50
-    y_axis_label: 'PV'
+    y_axis_label: 'Data'
     x_axis_label: 'Time'
 
 pen_1:
@@ -12,11 +12,11 @@ pen_1:
     plot: 1
 
 pen_2:
-    name: "SP"
+    name: "OP"
     colour: "b^-"
     plot: 1
 
-#pen_3:
-#    name: "OP"
-#    colour: "rx-"
-#    plot: 2
+pen_3:
+    name: "SP"
+    colour: "rx-"
+    plot: 1

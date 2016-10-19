@@ -1,19 +1,19 @@
 # Settings for the basic PID controller algorithm
 
-# Controller state - "auto" or "manual
-controlMode: "auto"
+# Controller state - "auto" or "manual"
+controlMode: "manual"
 
 # Controller setpoint - 0 - 100%
 setPoint: 50
 
-#Control Time Interval (s)
+#Control Time Interval (s) (Dont change on the run)
 interval: 5
 
 # Tuning Params
-# Recommend the Cohen-coon method
-Kg:  8.29
-Ki: 24.11
-Kd:  3.58
+# Recommend the reaction curve or Cohen-coon method
+Kg:   1.5   #1.12     1.5
+Ki:  99.0   #164.83   99.0
+Kd:   5.0   #         24.75
 ctrlType: "PID"
 
 # Saturation

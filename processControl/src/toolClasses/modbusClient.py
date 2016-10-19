@@ -128,12 +128,11 @@ class modbusClient:
                         raise SystemExit('Modbus Error: Failed 3 Attemps')
                 elif r == ValueError:
                     #TODO: remove sys exit and handle properly
-                    raise SystemExit('Invalid operation')
+                    raise SystemExit('Invalid Register - Use 15 or 16')
                 else:
                     return r
-
-        elif op == 'w':
-            for i in range(3):           
+        if op == 'w':
+            for i in range(3):
                 w = self.__writeData(reg, addr, data, encoding)
                 if (w == ConnectionException) or (w == ModbusIOException):
                     print("Write attempt " + str(i) + " failed")
@@ -142,12 +141,10 @@ class modbusClient:
                         raise SystemExit('Modbus Error: Failed 3 Attemps')
                 elif w == ValueError:
                     #TODO: remove sys exit and handle properly
-                    raise SystemExit('Invalid operation')
+                    raise SystemExit('Invalid Register - Use 15 or 16')
                 else:
                     return w
-         
-        else:
-            return ValueError('Invalid Operation')
+        return ValueError('Invalid Operation')
             
     
     def __readData(self, reg, addr, length, encoding):

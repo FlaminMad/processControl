@@ -35,7 +35,7 @@ class PIDControl:
         self.gph = plotDataPoints()
         self.log = procDataLog()
         self.PID = PIDController()
-        self.cfg = yamlImport.importYAML("./cfg/controllerSettings.yaml")
+        self.cfg = yamlImport.importYAML("./cfg/controllerSettings/PIDControl.yaml")
         self.count = 0
 
     
@@ -59,35 +59,36 @@ class PIDControl:
         """Main run loop for the PID controller
         Ensure that the startStop method is called before and after this function
         """
-        startTime = time.time()                 #For time reference
+        startTime = time.time()                             #For time reference
         while(True):
-            loopTime = time.time()              #Itteration start time
-            runTime = round(time.time() - startTime)
-            data = self.IOHandler()
-            #control
-            self.log.write(data)
-            self.gph.dataUpdate(runTime, data)
-            if self.ext.kbdExit():              #Detect exit condition
+            loopTime = time.time()                          #Itteration start time
+            runTime = round(time.time() - startTime)        #Graph plot x axis
+            data = self.IOHandler()                         #Read device
+            data[1] = self.PID.runCtrl(data[0],data[1])     #Calculate OP           
+            self.coms.dataHandler('w',16,0,data=data[1])    #Write new OP to device
+            data.append(self.PID.cfg["setPoint"])           #Append setpoint to array
+            self.log.write(data)                            #Write data array to csv
+            self.gph.dataUpdate(runTime, data)              #Plot data array to graph
+            if self.ext.kbdExit():                          #Check for exit condition
                 break
-            print self.count                    #Heartbeat
-            self.count += 1                     #Heartbeat
-            time.sleep(self.cfg['PIDControl']['interval'] -\
-                      (time.time() - loopTime)) #Loop Interval
+            print self.count                                #Heartbeat
+            self.count += 1                                 #Heartbeat
+            time.sleep(self.cfg['interval'] - (time.time() - loopTime))
     
     def IOHandler(self):
         """Used to read data from the MODBUS connection and append to one list
         Add data by including additional lines of ioData.extend or modifying the
         current read address lengths
         """
-        ioData = self.coms.dataHandler('r',4,0,length=2)
-        ioData.extend(self.coms.dataHandler('r',3,0,length=2))
+        ioData = self.coms.dataHandler('r',4,0,length=2)        #PV
+        ioData.extend(self.coms.dataHandler('r',3,0,length=2))  #OP
         return ioData
         
     
 def main():
-    ctrl = PIDControl()                      #Initialise the data logging tool class
-    ctrl.startStop(1)                        #Start logs and open connection
+    ctrl = PIDControl()                      #Initialise a PID instance
+    ctrl.startStop(1)                        #Start logs and opens a connection
     ctrl.run()                               #Run main method
-    ctrl.startStop(0)                        #Start logs and open connection  
+    ctrl.startStop(0)                        #Stops logs and closes the connection 
 
 if __name__ == '__main__':main()

@@ -19,14 +19,17 @@ else:
 
 
 class osTools:
+    """Set of functions useful in working between platforms"""
 
     def __init__(self):
+        """Setup params when instance is initialised"""
         self.osType = self.__osDetect()
         print("Press c to exit")
         pass
 
 
     def __osDetect(self):
+        """Returns the OS type where 0 represents Windows and 1 Linux"""
         if os.name == 'nt':
             return 0
         elif os.name == 'posix':
@@ -36,6 +39,7 @@ class osTools:
 
 
     def kbdExit(self):
+        """Handler for breaking a loop with a keyboard press"""
         if self.osType == 1:
             return self.__linuxExit()
         else:
@@ -43,6 +47,10 @@ class osTools:
 
         
     def __linuxExit(self):
+        """Checks for the c key being pressed (Linux specific)
+        
+        :return: boolean
+        """
         i,o,e = select.select([sys.stdin],[],[],0.0001)
         for x in i:
             if x == sys.stdin:
@@ -52,6 +60,10 @@ class osTools:
 
 
     def __ntExit(self):
+        """Checks for the c key being pressed (Windows specific)
+        
+        :return: boolean
+        """
         x = msvcrt.kbhit()
         if x:
             if msvcrt.getch() == 'c':

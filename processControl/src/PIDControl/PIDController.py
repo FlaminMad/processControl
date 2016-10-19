@@ -9,30 +9,56 @@
 @desc:   Contains PID controller algorithm for import
 """
 
+import numpy as np
 from ..toolClasses.yamlImport import yamlImport
 
 
 class PIDController:
     """Help Text"""
     def __init__(self):
+        """Read the config fle and set initial control mode"""        
         self.__readConfig()
+        self.prevCtrlMode = "Startup"
         
     
     def runCtrl(self,PV,OP):
-        if self.cfg['controlMode'] == "auto":
-            return self.__autoControl(PV,OP)
+        """Call to run the PID control algorithm as per the cfg file
+        
+        :param PV:  Process variable at current time      
+        :param OP:  Valve operating point
+        :type PV:   float
+        :type OP:   float
+        
+        :return: New value for OP
+        """
+        self.__readConfig()
+        if self.prevCtrlMode != self.cfg['controlMode']:
+            self.spErr = self.__reduceTransEffect(PV,OP)
+            self.prevCtrlMode = self.cfg['controlMode']
+        if self.cfg['controlMode'] == "acuto":
+            return round(self.__autoControl(PV,OP),2)
         if self.cfg['controlMode'] == "manual":
             return self.cfg['setPoint']
         return ValueError("Invalid Control Mode")
 
 
     def __autoControl(self,PV,OP):
+        """Handler for the PID control algorithm (auto mode)
+        
+        :param PV:  Process variable at current time      
+        :param OP:  Valve operating point
+        :type PV:   float
+        :type OP:   float
+        
+        :return: New value for OP
+        """
         ERR = self.cfg['setPoint'] - PV
-        return self.__vlvLims(self.__algorithm(PV,ERR),ERR)
+        return self.__vlvLims(self.__pidAlgorithm(PV,ERR),ERR)
     
 
-    def __algorithm(self,PV,ERR):
+    def __pidAlgorithm(self,PV,ERR):
         """Runs the PID algorithm
+        
         :param PV: Process Variable
         :param ERR: Setpoint Error
         :type PV: float
@@ -42,7 +68,7 @@ class PIDController:
             return self.cfg['Kg'] * ERR
         elif self.cfg['ctrlType'] == "PI":
             return self.cfg["Kg"] * (ERR + self.__integral())
-        elif self.settings['ctrlType']  == "PID":
+        elif self.cfg['ctrlType']  == "PID":
             return self.cfg["Kg"] * (ERR + self.__integral() + self.__derivitive(PV))
         else:
             return ValueError('Invalid Control Type - Options are P, PI & PID')
@@ -87,12 +113,30 @@ class PIDController:
          return OP
     
     
-    def __transition(self,pv,u,error):
-        pass
+    def __reduceTransEffect(self,PV,OP):
+        """Calculate the value for spErr (set point error) to ensure seamless
+        bump during controller changover. Note that deriv and prevErr are also
+        set.
+
+        :param PV:  Process variable at current time      
+        :param OP:  Valve operating point
+        :param ERR: Set point error
+        :type PV:   float
+        :type OP:   float
+        :type ERR:  float
         
+        :return: Value for spErr
+        """
+        self.deriv = PV
+        self.prevErr = self.cfg['setPoint'] - PV
         
-    def __tools(self,pv,sp,op,error):
-        pass
-    
+        if self.cfg["ctrlType"] == "P":
+            return 0
+        elif self.cfg["ctrlType"] == "PI" or self.cfg["ctrlType"] == "PID":
+            return np.around(((self.cfg['Ki']/self.cfg['interval'])*((OP/self.cfg['Kg'])-(self.cfg['setPoint'] - PV))),0)   
+        else:
+            return ValueError('Invalid Control Type - Options are P, PI & PID')
+
     def __readConfig(self):
-        self.cfg = yamlImport.yamlImport("./cfg/controllerSettings/PIDControl.yaml")
+        """Read the PID control config file"""
+        self.cfg = yamlImport.importYAML("./cfg/controllerSettings/PIDControl.yaml")

@@ -108,6 +108,7 @@ class plotDataPoints:
     def dataUpdate(self, x, *y):
         """Add data to the graph"""
         self.xData = np.append(self.xData,x)
+        #todo: Need to add try catch on this line as will fail if config is wrong
         self.yData = np.append(self.yData,np.transpose(np.matrix(y)),1)
         if len(self.xData) > self.plotCfg['plot_cfg']['x_axis_length']:
             self.xData = np.delete(self.xData,0)
