@@ -16,7 +16,7 @@ pen_2:
     colour: "b^-"
     plot: 1
 
-pen_3:
-    name: "SP"
-    colour: "rx-"
-    plot: 1
+#pen_3:
+#    name: "SP"
+#    colour: "rx-"
+#    plot: 1
